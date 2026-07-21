@@ -1,0 +1,44 @@
+<%- include('partials/shell-start', { pageScript: '/js/schedule.js' }) %>
+  <section class="page-header">
+    <div><p class="eyebrow">WEEKLY SCHEDULE</p><h1>ผังรายการทั้งหมด</h1><p>ตารางออกอากาศ 7 วัน เรียงตาม Broadcast Day ตั้งแต่ 04:00 น.</p></div>
+    <button class="button button-primary" type="button" data-open-schedule>＋ เพิ่มลงผังรายการ</button>
+  </section>
+
+  <div class="schedule-legend"><span><i class="legend-import"></i> ข้อมูลนำเข้าจากผังเดิม</span><span><i class="legend-new"></i> ข้อมูลที่เพิ่มในระบบ</span></div>
+  <section class="schedule-board">
+    <% Object.entries(schedule).forEach(([day, entries]) => { %>
+      <article class="day-column day-<%= day %>">
+        <header><div><small>วัน</small><h2><%= helpers.dayLabels[day] %></h2></div><span><%= entries.length %></span></header>
+        <div class="day-list">
+          <% entries.forEach((entry) => { %>
+            <div class="schedule-card <%= entry.source === 'json-import' ? 'imported' : '' %>" data-schedule-id="<%= entry.id %>">
+              <time><%= entry.time_start %><small>ถึง <%= entry.time_end %></small></time>
+              <div><strong><%= entry.program_name %></strong><small><%= entry.source === 'json-import' ? 'ผังรายการเดิม' : 'เพิ่มในระบบ' %></small></div>
+              <span class="schedule-actions">
+                <button class="icon-button" type="button" data-edit-schedule="<%= entry.id %>" data-program-id="<%= entry.program_id || '' %>" data-day="<%= entry.day %>" data-start="<%= entry.time_start %>" data-end="<%= entry.time_end %>" data-name="<%= entry.program_name %>" title="แก้ไข">✎</button>
+                <button class="icon-button danger" type="button" data-delete-schedule="<%= entry.id %>" data-name="<%= entry.program_name %>" title="ลบ">⌫</button>
+              </span>
+            </div>
+          <% }) %>
+          <% if (entries.length === 0) { %><div class="day-empty">ยังไม่มีรายการ</div><% } %>
+        </div>
+      </article>
+    <% }) %>
+  </section>
+
+  <dialog class="modal" id="scheduleDialog">
+    <form id="scheduleForm" class="modal-card">
+      <header><div><p class="eyebrow">SCHEDULE</p><h2 id="scheduleDialogTitle">เพิ่มรายการลงผัง</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="ปิด">×</button></header>
+      <div class="modal-body stack-form">
+        <input type="hidden" name="id">
+        <label>เลือกรายการ<select name="program_id" required><option value="">เลือกรายการ</option><% programs.forEach((program) => { %><option value="<%= program.id %>"><%= program.program_name %></option><% }) %></select></label>
+        <fieldset id="multiDayField"><legend>เลือกวัน (เลือกได้มากกว่า 1 วัน)</legend><div class="day-checks"><% Object.entries(helpers.dayLabels).forEach(([day, label]) => { %><label><input type="checkbox" name="days" value="<%= day %>"><span><%= label %></span></label><% }) %></div></fieldset>
+        <label id="singleDayField" hidden>วัน<select name="day"><% Object.entries(helpers.dayLabels).forEach(([day, label]) => { %><option value="<%= day %>"><%= label %></option><% }) %></select></label>
+        <div class="form-grid"><label>เวลาเริ่ม<input name="time_start" inputmode="numeric" pattern="(?:[01][0-9]|2[0-4]):[0-5][0-9]" placeholder="HH:MM" maxlength="5" required></label><label>เวลาสิ้นสุด<input name="time_end" inputmode="numeric" pattern="(?:[01][0-9]|2[0-4]):[0-5][0-9]" placeholder="HH:MM" maxlength="5" required></label></div>
+        <p class="form-hint" id="importedHint" hidden>รายการนี้นำเข้าจาก JSON เดิมและยังไม่เชื่อมกับข้อมูลรายการ กรุณาเลือกรายการจากระบบก่อนบันทึก</p>
+        <p class="form-error" id="scheduleFormError" role="alert"></p>
+      </div>
+      <footer><button class="button button-ghost" type="button" data-close-dialog>ยกเลิก</button><button class="button button-primary" type="submit">บันทึกผังรายการ</button></footer>
+    </form>
+  </dialog>
+<%- include('partials/shell-end', { pageScript: '/js/schedule.js' }) %>

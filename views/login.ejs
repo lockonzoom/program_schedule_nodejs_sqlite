@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="เข้าสู่ระบบจัดการผังรายการ">
+  <title><%= title %> | Program Schedule</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-intro">
+      <span class="login-badge">TV5HD · PROGRAM OPERATIONS</span>
+      <h1>ระบบจัดการ<br>ผังรายการ</h1>
+      <p>จัดเก็บข้อมูลรายการ วางผังออกอากาศ และตรวจสอบตารางทั้ง 7 วันในระบบเดียว</p>
+      <div class="signal-lines" aria-hidden="true"><span></span><span></span><span></span></div>
+    </section>
+    <section class="login-card">
+      <div class="login-logo"><span>5</span></div>
+      <div>
+        <p class="eyebrow">ยินดีต้อนรับ</p>
+        <h2>เข้าสู่ระบบ</h2>
+        <p class="muted">ใช้บัญชีผู้ดูแลระบบเพื่อดำเนินการต่อ</p>
+      </div>
+      <% if (error) { %><div class="alert alert-error" role="alert"><%= error %></div><% } %>
+      <form action="/login" method="post" class="stack-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <label>อีเมล
+          <input type="email" name="email" value="<%= email %>" autocomplete="username" placeholder="admin@example.com" required autofocus>
+        </label>
+        <label>รหัสผ่าน
+          <span class="password-field">
+            <input id="password" type="password" name="password" autocomplete="current-password" placeholder="กรอกรหัสผ่าน" required>
+            <button id="togglePassword" type="button" aria-label="แสดงรหัสผ่าน">แสดง</button>
+          </span>
+        </label>
+        <label class="checkbox-row"><input type="checkbox" name="remember" value="1"> จดจำการเข้าสู่ระบบ 30 วัน</label>
+        <button class="button button-primary button-large" type="submit">เข้าสู่ระบบ</button>
+      </form>
+      <p class="login-hint">บัญชีเริ่มต้น: admin@example.com / admin1234</p>
+    </section>
+  </main>
+  <script src="/js/login.js" defer></script>
+</body>
+</html>

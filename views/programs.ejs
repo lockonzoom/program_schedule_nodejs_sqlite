@@ -1,0 +1,64 @@
+<%- include('partials/shell-start', { pageScript: '/js/programs.js' }) %>
+  <section class="page-header">
+    <div><p class="eyebrow">PROGRAM CATALOG</p><h1>รายการทั้งหมด</h1><p>จัดการข้อมูลรายการ ผู้ผลิต สัญญา และช่วงออกอากาศ</p></div>
+    <button class="button button-primary" type="button" data-open-program>＋ เพิ่มรายการ</button>
+  </section>
+
+  <section class="panel table-panel">
+    <div class="table-toolbar">
+      <label class="search-field"><span>⌕</span><input id="programSearch" type="search" placeholder="ค้นหาชื่อรายการหรือบริษัท…" aria-label="ค้นหารายการ"></label>
+      <span class="record-count"><strong id="visibleCount"><%= programs.length %></strong> รายการ</span>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table" id="programTable">
+        <thead><tr><th>รายการ</th><th>ผู้ผลิต</th><th>ประเภท</th><th>ช่วงออกอากาศ</th><th>Rating</th><th>สถานะสัญญา</th><th><span class="sr-only">การทำงาน</span></th></tr></thead>
+        <tbody>
+          <% programs.forEach((program) => { %>
+            <tr data-search="<%= `${program.program_name} ${program.company_name || ''}`.toLocaleLowerCase('th') %>">
+              <td><strong><%= program.program_name %></strong><small>ID <%= program.id %> · เพิ่ม <%= helpers.thaiDate(program.created_at) %></small></td>
+              <td><%= helpers.producerLabels[program.producer_type] || '—' %><small><%= program.company_name || 'ไม่ระบุบริษัท' %></small></td>
+              <td><%= helpers.programTypeLabels[program.program_type] || '—' %></td>
+              <td><%= helpers.thaiDate(program.broadcast_start) %><small>ถึง <%= helpers.thaiDate(program.broadcast_end) %></small></td>
+              <td><span class="status status-rating-<%= program.rating_color || 'none' %>"><%= helpers.ratingLabels[program.rating_color] || 'ไม่ระบุ' %></span></td>
+              <td><span class="status status-<%= program.contract_status || 'none' %>"><%= helpers.contractLabels[program.contract_status] || 'ไม่ระบุ' %></span></td>
+              <td class="row-actions">
+                <button class="icon-button" type="button" data-view-program="<%= program.id %>" title="รายละเอียด">ⓘ</button>
+                <button class="icon-button" type="button" data-edit-program="<%= program.id %>" title="แก้ไข">✎</button>
+                <button class="icon-button danger" type="button" data-delete-program="<%= program.id %>" data-program-name="<%= program.program_name %>" title="ลบ">⌫</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="programEmpty" hidden><strong>ไม่พบรายการ</strong><p>ลองเปลี่ยนคำค้นหา หรือเพิ่มรายการใหม่</p></div>
+  </section>
+
+  <dialog class="modal" id="programDialog">
+    <form id="programForm" class="modal-card">
+      <header><div><p class="eyebrow">PROGRAM</p><h2 id="programDialogTitle">เพิ่มรายการ</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="ปิด">×</button></header>
+      <div class="modal-body form-grid">
+        <input type="hidden" name="id">
+        <label class="span-2">ชื่อรายการ<input name="program_name" maxlength="255" required></label>
+        <label>ประเภทผู้ผลิต<select name="producer_type"><option value="">ไม่ระบุ</option><option value="tv5hd">ททบ.</option><option value="producer">ผู้จัด</option></select></label>
+        <label>ชื่อบริษัท<input name="company_name" maxlength="255"></label>
+        <label>ประเภทใช้เวลา<select name="program_type"><option value="">ไม่ระบุ</option><option value="renttime">เช่าเวลา</option><option value="revenuesharing">Revenue Sharing</option><option value="timesharing">Time Sharing</option><option value="other">อื่น ๆ</option></select></label>
+        <label>Rating<select name="rating_color"><option value="">ไม่ระบุ</option><option value="green">Top 10</option><option value="yellow">อันดับทั่วไป</option><option value="red">Bottom 10</option></select></label>
+        <label>วันที่เริ่มออกอากาศ<input type="date" name="broadcast_start"></label>
+        <label>วันที่สิ้นสุด<input type="date" name="broadcast_end"></label>
+        <label>สถานะสัญญา<select name="contract_status"><option value="">ไม่ระบุ</option><option value="success">เสร็จสิ้นแล้ว</option><option value="inprogress">อยู่ระหว่างดำเนินการ</option><option value="debt">มีหนี้สิน</option></select></label>
+        <label class="span-2">เนื้อหาโดยย่อ<textarea name="summary" rows="4" maxlength="5000"></textarea></label>
+        <p class="form-error span-2" id="programFormError" role="alert"></p>
+      </div>
+      <footer><button class="button button-ghost" type="button" data-close-dialog>ยกเลิก</button><button class="button button-primary" type="submit">บันทึกข้อมูล</button></footer>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="programDetailDialog">
+    <article class="modal-card detail-card">
+      <header><div><p class="eyebrow">PROGRAM DETAIL</p><h2 id="detailProgramName">รายละเอียดรายการ</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="ปิด">×</button></header>
+      <div class="modal-body detail-grid" id="programDetail"></div>
+      <footer><button class="button button-primary" type="button" data-close-dialog>ปิด</button></footer>
+    </article>
+  </dialog>
+<%- include('partials/shell-end', { pageScript: '/js/programs.js' }) %>

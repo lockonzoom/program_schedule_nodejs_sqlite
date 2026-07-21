@@ -1,0 +1,34 @@
+<%- include('partials/shell-start', { pageScript: '' }) %>
+  <section class="page-header">
+    <div><p class="eyebrow">OVERVIEW</p><h1>ภาพรวมระบบ</h1><p>สรุปข้อมูลรายการและผังออกอากาศล่าสุด</p></div>
+    <a class="button button-primary" href="/schedule">ดูผังรายการ</a>
+  </section>
+
+  <section class="stat-grid" aria-label="สถิติระบบ">
+    <article class="stat-card accent-blue"><span class="stat-icon">▶</span><div><small>รายการทั้งหมด</small><strong><%= stats.programs.toLocaleString('th-TH') %></strong><a href="/programs">จัดการรายการ →</a></div></article>
+    <article class="stat-card accent-purple"><span class="stat-icon">▦</span><div><small>ช่วงออกอากาศต่อสัปดาห์</small><strong><%= stats.scheduleEntries.toLocaleString('th-TH') %></strong><a href="/schedule">เปิดผังรายการ →</a></div></article>
+    <article class="stat-card accent-green"><span class="stat-icon">✓</span><div><small>สัญญาเสร็จสิ้น</small><strong><%= stats.activeContracts.toLocaleString('th-TH') %></strong><a href="/programs">ดูข้อมูลสัญญา →</a></div></article>
+    <article class="stat-card accent-orange"><span class="stat-icon">!</span><div><small>สิ้นสุดใน 30 วัน</small><strong><%= stats.endingSoon.toLocaleString('th-TH') %></strong><a href="/programs">ตรวจสอบรายการ →</a></div></article>
+  </section>
+
+  <section class="dashboard-grid">
+    <article class="panel">
+      <div class="panel-header"><div><h2>จำนวนช่วงออกอากาศ</h2><p>แยกตามวันในสัปดาห์</p></div><span class="tag">7 วัน</span></div>
+      <div class="bar-chart">
+        <% const maxDayCount = Math.max(...Object.values(scheduleByDay), 1); %>
+        <% Object.entries(scheduleByDay).forEach(([day, count]) => { %>
+          <div class="bar-item"><strong><%= count %></strong><div class="bar-track"><span data-bar-percent="<%= Math.round((count / maxDayCount) * 100) %>"></span></div><small><%= helpers.dayLabels[day] %></small></div>
+        <% }) %>
+      </div>
+    </article>
+
+    <article class="panel">
+      <div class="panel-header"><div><h2>รายการที่เพิ่มล่าสุด</h2><p>ข้อมูลล่าสุดในระบบ</p></div><a href="/programs">ดูทั้งหมด</a></div>
+      <div class="recent-list">
+        <% recentPrograms.forEach((program) => { %>
+          <a href="/programs" class="recent-item"><span class="program-dot rating-<%= program.rating_color || 'none' %>"></span><div><strong><%= program.program_name %></strong><small><%= helpers.programTypeLabels[program.program_type] || 'ยังไม่ระบุประเภท' %> · <%= helpers.thaiDate(program.created_at) %></small></div><span>›</span></a>
+        <% }) %>
+      </div>
+    </article>
+  </section>
+<%- include('partials/shell-end', { pageScript: '' }) %>
