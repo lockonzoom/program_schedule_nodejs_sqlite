@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ระบบจัดการผังรายการสถานีวิทยุโทรทัศน์กองทัพบก">
+  <title><%= title %> | Program Schedule</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body data-csrf-token="<%= csrfToken %>">
+  <header class="topbar">
+    <button class="icon-button mobile-only" id="sidebarToggle" type="button" aria-label="เปิดเมนู">☰</button>
+    <a class="brand" href="/dashboard">
+      <span class="brand-mark">5</span>
+      <span><strong>Program Schedule</strong><small>สถานีวิทยุโทรทัศน์กองทัพบก</small></span>
+    </a>
+    <div class="user-menu">
+      <span class="avatar"><%= user.fullName.charAt(0) %></span>
+      <span class="user-copy"><strong><%= user.fullName %></strong><small><%= user.position || user.email %></small></span>
+      <form action="/logout" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="button button-ghost button-small" type="submit">ออกจากระบบ</button>
+      </form>
+    </div>
+  </header>
+
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="เมนูหลัก">
+      <p class="nav-heading">เมนูหลัก</p>
+      <a class="nav-link <%= currentPath === '/dashboard' ? 'active' : '' %>" href="/dashboard"><span>◫</span> ภาพรวมระบบ</a>
+      <a class="nav-link <%= currentPath === '/programs' ? 'active' : '' %>" href="/programs"><span>▶</span> รายการทั้งหมด</a>
+      <a class="nav-link <%= currentPath === '/schedule' ? 'active' : '' %>" href="/schedule"><span>▦</span> ผังรายการ</a>
+      <p class="nav-heading">ถ่ายทอดสด</p>
+      <div class="live-card">
+        <video controls muted preload="metadata" aria-label="สถานีโทรทัศน์กองทัพบก ถ่ายทอดสด">
+          <source src="https://639bc5877c5fe.streamlock.net/tv5hdlive/tv5hdlive/playlist.m3u8" type="application/x-mpegURL">
+        </video>
+        <span><i></i> TV5HD Live</span>
+      </div>
+    </nav>
+    <p class="sidebar-footer">Node.js + Express + SQLite</p>
+  </aside>
+
+  <main class="main-content">
