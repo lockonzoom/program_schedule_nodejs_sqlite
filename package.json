@@ -1,0 +1,23 @@
+{
+  "name": "program-schedule-nodejs-sqlite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ระบบจัดการผังรายการด้วย Node.js, Express และ SQLite",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js",
+    "db:reset": "node --env-file-if-exists=.env scripts-reset-db.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "helmet": "^8.1.0"
+  }
+}
